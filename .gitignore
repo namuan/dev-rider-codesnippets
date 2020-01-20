@@ -1,3 +1,14 @@
+# IDE
 .idea/
-java-snippets/target/*
 *.iml
+
+# Java
+java-snippets/target/*
+
+# Python
+venv/
+__pycache__/
+*.pyc
+dist/
+build*
+*.egg-info

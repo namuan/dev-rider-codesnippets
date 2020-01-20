@@ -1,3 +1,12 @@
+/*
+Requires Apache commons-codec - https://mvnrepository.com/artifact/commons-codec/commons-codec
+
+    <dependency>
+        <groupId>commons-codec</groupId>
+        <artifactId>commons-codec</artifactId>
+        <version>1.13</version>
+    </dependency>
+*/
 package dev.deskriders.devrider.codecs;
 
 import org.apache.commons.codec.DecoderException;
