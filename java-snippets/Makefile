@@ -3,13 +3,13 @@ export PROJECTNAME=$(shell basename "$(PWD)")
 .SILENT: ;               # no need for @
 
 setup: ## Setup application
-	mvn clean
+	./mvnw clean
 
 build: setup ## Build application
-	mvn compile
+	./mvnw compile
 
 test: build ## Test application
-	mvn test
+	./mvnw test
 
 .PHONY: help
 .DEFAULT_GOAL := help
