@@ -1,1 +1,0 @@
-### DevRider Code Snippets
