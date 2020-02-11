@@ -2,24 +2,24 @@ package main
 
 import "testing"
 
-func TestEncode(t *testing.T) {
-	type args struct {
-		src string
-	}
-	tests := []struct {
-		name string
-		args args
-	}{
-		{"should encode string to base64 string", args{src: "Hello World"}},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			got := Encode(tt.args.src)
-			expected := "SGVsbG8gV29ybGQ="
+func TestBase64(t *testing.T) {
 
-			if got != expected {
-				t.Errorf("got %q, expected %q", got, expected)
-			}
-		})
-	}
+	t.Run("should encode string to base64", func(t *testing.T) {
+		got := Base64Encode("Hello World")
+		expected := "SGVsbG8gV29ybGQ="
+
+		if got != expected {
+			t.Errorf("got %q, expected %q", got, expected)
+		}
+	})
+
+	t.Run("should decode string from base64", func(t *testing.T) {
+		got := Base64Decode("SGVsbG8gV29ybGQ=")
+		expected := "Hello World"
+
+		if got != expected {
+			t.Errorf("got %q expected %q", got, expected)
+		}
+	})
+
 }
