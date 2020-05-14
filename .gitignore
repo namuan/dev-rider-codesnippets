@@ -4,6 +4,8 @@
 
 # Java
 java-snippets/target/*
+.gradle
+build/
 
 # Python
 venv/
