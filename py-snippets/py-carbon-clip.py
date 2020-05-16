@@ -43,7 +43,7 @@ async def download_image(page):
 
 
 async def open_site(uri_encoded_clip_text):
-    browser = await launch(headless=True, slowMo=1, defaultViewport=None)
+    browser = await launch(defaultViewport=None)
     page = await browser.newPage()
     await page._client.send('Page.setDownloadBehavior', {'behavior': 'allow', 'downloadPath': DOWNLOAD_FOLDER})
     await page.goto("https://carbon.now.sh?code=" + uri_encoded_clip_text)
