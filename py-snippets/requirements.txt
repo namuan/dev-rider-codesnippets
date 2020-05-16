@@ -1,2 +1,4 @@
 mistune
 pytest
+pyperclip
+pyppeteer
