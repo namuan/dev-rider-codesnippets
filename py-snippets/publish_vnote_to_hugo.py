@@ -67,7 +67,7 @@ class ServeSite(object):
     def run(self, context):
         blog_root = context["blog"]
         os.chdir(blog_root)
-        subprocess.call("make serve", shell=True)
+        subprocess.call("open -a \"iTerm.app\" {}".format(blog_root), shell=True)
         print("Serving site ...")
         
 
