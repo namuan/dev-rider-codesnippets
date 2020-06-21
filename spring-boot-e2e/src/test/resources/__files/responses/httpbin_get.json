@@ -1,0 +1,16 @@
+{
+  "args": {
+    "qn": "Omar Williams"
+  },
+  "headers": {
+    "Accept": "*/*",
+    "Accept-Encoding": "gzip, deflate",
+    "Host": "httpbin.org",
+    "User-Agent": "python-requests/2.22.0",
+    "X-Amzn-Trace-Id": "Root=1-5eb55068-a3926abac76f742a95999668",
+    "X-Name": "Omar Williams",
+    "X-Shared": "Common-Header-Value"
+  },
+  "origin": "1.1.1.1",
+  "url": "https://httpbin.org/get?qn=Omar+Williams"
+}

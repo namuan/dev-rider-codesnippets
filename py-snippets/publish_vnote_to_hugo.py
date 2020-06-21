@@ -27,7 +27,7 @@ class CopyImageFiles(object):
         return compiled_rgx.findall(document)
         
     def image_tags_from_note(self, note_path):
-        return self.rgx_find_all(Path(note_path).read_text(), "\((images\/.*.png)\)")
+        return self.rgx_find_all(Path(note_path).read_text(), "\((images\/.*.[gif|png])\)")
         
     def image_path_in_vnote(self, note_path, image):
         note = Path(note_path)
