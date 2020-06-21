@@ -20,11 +20,13 @@ dependencies {
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }
-    testImplementation 'io.cucumber:cucumber-java8:6.1.1'
-    testImplementation 'io.cucumber:cucumber-junit:6.1.1'
-    testImplementation 'io.cucumber:cucumber-spring:6.1.1'
-    testImplementation 'io.rest-assured:rest-assured:4.2.0'
-    testImplementation 'io.rest-assured:json-path:4.2.0'
-    testImplementation 'io.rest-assured:xml-path:4.2.0'
-    testImplementation 'org.springframework.cloud:spring-cloud-contract-wiremock:2.2.3.RELEASE'
+    testImplementation "org.springframework.cloud:spring-cloud-contract-wiremock:${spring_cloud_contract_version}"
+
+    testImplementation "io.cucumber:cucumber-java8:${cucumber_version}"
+    testImplementation "io.cucumber:cucumber-junit:${cucumber_version}"
+    testImplementation "io.cucumber:cucumber-spring:${cucumber_version}"
+
+    testImplementation "io.rest-assured:rest-assured:${restassured_version}"
+    testImplementation "io.rest-assured:json-path:${restassured_version}"
+    testImplementation "io.rest-assured:xml-path:${restassured_version}"
 }
