@@ -5,6 +5,7 @@ import com.github.tomakehurst.wiremock.client.WireMock;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.configureFor;
 import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 public class HttpBinStub {
     private final WireMockServer wireMockServer;
@@ -19,6 +20,7 @@ public class HttpBinStub {
                 WireMock.get("/get").willReturn(
                         WireMock.aResponse()
                                 .withStatus(OK.value())
+                                .withHeader("Content-Type", APPLICATION_JSON_VALUE)
                                 .withBodyFile("responses/httpbin_get.json")
                 )
         );
