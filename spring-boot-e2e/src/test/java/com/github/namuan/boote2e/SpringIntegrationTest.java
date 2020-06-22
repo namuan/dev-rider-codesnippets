@@ -7,10 +7,13 @@ import io.restassured.response.ValidatableResponse;
 import io.restassured.specification.RequestSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.ConfigFileApplicationContextInitializer;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
 @CucumberContextConfiguration
-@SpringBootTest(classes = Boote2eApplication.class)
+@SpringJUnitConfig(initializers = ConfigFileApplicationContextInitializer.class)
+@Import(value = {TestConfiguration.class})
 public class SpringIntegrationTest {
 
     protected RequestSpecification requestSpecification;
