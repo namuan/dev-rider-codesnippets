@@ -1,13 +1,21 @@
 package kt.snippets
 
 import com.google.gson.Gson
+import com.google.gson.annotations.SerializedName
 import java.net.URI
 import java.net.http.HttpClient
 import java.net.http.HttpRequest
 import java.net.http.HttpResponse
 
 // Define request and response data classes
-data class CompletionRequest(val model: String, val prompt: String, val temperature: Double)
+data class CompletionRequest(
+    val model: String,
+    val prompt: String,
+    val temperature: Double,
+    @SerializedName("max_tokens") val maxTokens: Int = 300,
+    val stream: Boolean = false
+)
+
 data class Choice(val text: String)
 data class CompletionResponse(val choices: List<Choice>)
 // end
@@ -16,8 +24,8 @@ fun main() {
     // Create completion request with the prompt
     val completionRequest = CompletionRequest(
         "text-davinci-003",
-        "Who won the last men's football world cup?",
-        0.6
+        "Who won the last men's football world cup? and with what score?",
+        0.1
     )
     // end
 
@@ -40,6 +48,6 @@ fun main() {
     val completionResponse = Gson().fromJson(response.body(), CompletionResponse::class.java)
 
     // Print response
-    println("completionResponse = ${completionResponse.choices[0].text.trim()}")
+    println("completionResponse = ${completionResponse}")
 }
 
