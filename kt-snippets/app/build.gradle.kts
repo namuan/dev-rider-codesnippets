@@ -20,11 +20,12 @@ repositories {
 }
 
 dependencies {
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4")
+    implementation("com.google.code.gson:gson:2.10")
+    implementation("com.google.guava:guava:31.1-jre")
+
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.1")
-
-    implementation("com.google.code.gson:gson:2.8.5")
-    implementation("com.google.guava:guava:31.1-jre")
 }
 
 application {
