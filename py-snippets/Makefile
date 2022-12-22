@@ -3,7 +3,12 @@ export PROJECTNAME=$(shell basename "$(PWD)")
 .SILENT: ;               # no need for @
 
 setup: ## Setup application
-	python3 -m venv venv && ./venv/bin/python3 -m pip install -r requirements.txt
+	python3.11 -m venv venv && venv/bin/python3 -m pip install -r requirements.txt
+	venv/bin/python3 -m pip install --upgrade pip
+
+deps: ## Re-install dependencies
+	venv/bin/python3 -m pip install -r requirements.txt
+	venv/bin/python3 -m pip install --upgrade pip
 
 build: ## Build application
 	echo "Steps required to build sample application"

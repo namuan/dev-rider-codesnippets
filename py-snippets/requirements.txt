@@ -2,3 +2,4 @@ mistune
 pytest
 pyperclip
 pyppeteer
+manim >= 0.17.1
