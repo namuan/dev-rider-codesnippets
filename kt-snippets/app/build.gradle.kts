@@ -19,6 +19,8 @@ dependencies {
     implementation("com.google.code.gson:gson:2.10")
     implementation("com.google.guava:guava:31.1-jre")
 
+    implementation("org.xerial:sqlite-jdbc:3.40.0.0")
+
     // http4k
     implementation(project.dependencies.platform("org.http4k:http4k-bom:4.34.4.0"))
     implementation("org.http4k:http4k-core")
