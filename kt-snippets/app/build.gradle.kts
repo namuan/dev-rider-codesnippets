@@ -24,11 +24,10 @@ dependencies {
     implementation("org.http4k:http4k-core")
     implementation("org.http4k:http4k-server-jetty")
 
-    testImplementation("org.junit.jupiter:junit-jupiter:5.9.1")
-    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.1")
-    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.hamcrest:hamcrest-all:1.3")
-    testImplementation("org.http4k:http4k-client-jetty")
+    testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
+    testImplementation("org.junit.jupiter:junit-jupiter-engine:5.9.1")
+    testImplementation("org.junit.jupiter:junit-jupiter-params:5.9.1")
 }
 
 application {
