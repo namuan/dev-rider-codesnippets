@@ -5,7 +5,12 @@ import org.http4k.routing.bind
 import org.http4k.routing.path
 import org.http4k.routing.routes
 
-data class User(val name: String)
+data class User internal constructor(val name: String) {
+    companion object {
+        fun from(name: String): User = User(name)
+    }
+}
+
 data class ToDoItem(val description: String)
 data class ToDoList(val listName: ListName, val items: List<ToDoItem>)
 data class ListName(val name: String)
@@ -14,7 +19,7 @@ data class HtmlPage(val raw: String)
 fun extractListData(req: Request): Pair<User, ListName> {
     val user = req.path("user").orEmpty()
     val listName = req.path("list").orEmpty()
-    return User(user) to ListName(listName)
+    return User.from(user) to ListName(listName)
 }
 
 fun fetchListContent(listId: Pair<User, ListName>): ToDoList {
