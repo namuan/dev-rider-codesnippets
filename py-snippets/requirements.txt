@@ -2,4 +2,7 @@ mistune
 pytest
 pyperclip
 pyppeteer
-manim >= 0.17.1
+manim>=0.17.1
+py-executable-checklist
+yt-dlp
+
