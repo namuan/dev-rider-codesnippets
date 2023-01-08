@@ -4,7 +4,7 @@ from manim import *
 
 
 # command line to run scene with manim
-# manim -p -ql manim_gpt.py GPT
+# manim -p -ql manim_gpt.py GptScene
 
 class GptScene(Scene):
     def construct(self):
