@@ -18,3 +18,7 @@ __pycache__/
 dist/
 *.egg-info
 .temp/
+
+# Node
+node_modules/
+coverage/
