@@ -51,9 +51,12 @@ export const TokenProvider = ({clientId, clientSecret, children}: TokenProviderP
                 const t = await fetchToken(clientId, clientSecret);
                 setToken(t);
                 sessionStorage.setItem('authToken', t);
-            } catch (err: any) {
-                setTokenError(err?.response?.data?.error_description || err.message || 'Failed to fetch token');
-                sessionStorage.removeItem('authToken');
+            } catch (err: unknown) {
+                if (axios.isAxiosError(err)) {
+                    setTokenError(err?.response?.data?.error_description || err.message || 'Failed to fetch token');
+                    sessionStorage.removeItem('authToken');
+                }
+                throw err;
             } finally {
                 setTokenLoading(false);
             }
