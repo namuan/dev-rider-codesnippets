@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import {useEffect, useState} from 'react';
 import axios from 'axios';
 
 const fetchToken = async (username: string, password: string, expiresInMins: number = 60): Promise<string> => {
@@ -22,7 +22,7 @@ export function useToken(clientId: string, clientSecret: string) {
   const [tokenLoading, setTokenLoading] = useState(true);
 
   useEffect(() => {
-    const getToken = async () => {
+    (async () => {
       setTokenLoading(true);
       setTokenError(null);
       try {
@@ -33,8 +33,7 @@ export function useToken(clientId: string, clientSecret: string) {
       } finally {
         setTokenLoading(false);
       }
-    };
-    getToken();
+    })();
   }, [clientId, clientSecret]);
 
   return { token, tokenError, tokenLoading };
