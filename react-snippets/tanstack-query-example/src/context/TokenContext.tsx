@@ -1,17 +1,6 @@
-import {createContext, useContext, useState, useEffect, ReactNode} from 'react';
+import {useState, useEffect, ReactNode} from 'react';
 import axios from 'axios';
-
-interface TokenContextProps {
-    token: string | null;
-    tokenError: string | null;
-    tokenLoading: boolean;
-}
-
-const TokenContext = createContext<TokenContextProps | undefined>(undefined);
-
-const apiClient = axios.create({
-    baseURL: 'https://dummyjson.com',
-})
+import {TokenContext} from './tokenUtils.ts';
 
 interface TokenResponse {
     accessToken?: string;
@@ -19,13 +8,17 @@ interface TokenResponse {
     access_token?: string;
 }
 
+const apiClient = axios.create({
+    baseURL: 'https://dummyjson.com',
+});
+
 const fetchToken = async (username: string, password: string, expiresInMins: number = 60): Promise<string> => {
     const {data} = await apiClient.post<TokenResponse>(
         '/auth/login',
         {
             username,
             password,
-            expiresInMins
+            expiresInMins,
         }
     );
     return data.accessToken || data.token || data.access_token || '';
@@ -39,7 +32,7 @@ interface TokenProviderProps {
 
 export const TokenProvider = ({clientId, clientSecret, children}: TokenProviderProps) => {
     const [token, setToken] = useState<string | null>(
-        typeof window != 'undefined' ? sessionStorage.getItem('authToken') : null
+        typeof window !== 'undefined' ? sessionStorage.getItem('authToken') : null
     );
     const [tokenError, setTokenError] = useState<string | null>(null);
     const [tokenLoading, setTokenLoading] = useState(true);
@@ -72,12 +65,4 @@ export const TokenProvider = ({clientId, clientSecret, children}: TokenProviderP
             {children}
         </TokenContext.Provider>
     );
-};
-
-export const useTokenContext = (): TokenContextProps => {
-    const context = useContext(TokenContext);
-    if (!context) {
-        throw new Error('useTokenContext must be used within a TokenProvider');
-    }
-    return context;
 };
