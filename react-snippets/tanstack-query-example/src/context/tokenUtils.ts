@@ -15,3 +15,7 @@ export const useTokenContext = (): TokenContextProps => {
     }
     return context;
 };
+
+export function useToken() {
+    return useTokenContext();
+}
