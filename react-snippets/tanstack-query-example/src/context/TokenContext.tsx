@@ -1,17 +1,13 @@
 import {ReactNode, useEffect} from 'react';
-import axios from 'axios';
 import {TokenContext} from './tokenUtils.ts';
 import {useQuery} from "@tanstack/react-query";
+import apiClient from "../api/apiClient.ts";
 
 interface TokenResponse {
     accessToken?: string;
     token?: string;
     access_token?: string;
 }
-
-const apiClient = axios.create({
-    baseURL: 'https://dummyjson.com',
-});
 
 const fetchToken = async (username: string, password: string, expiresInMins: number = 60): Promise<string> => {
     const {data} = await apiClient.post<TokenResponse>(

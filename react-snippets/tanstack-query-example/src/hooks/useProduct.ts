@@ -2,10 +2,11 @@ import {QueryClient, useQuery, useQueryClient} from '@tanstack/react-query';
 import axios from 'axios';
 import {Product} from '../types/Product';
 import {useToken} from "../context/tokenUtils.ts";
+import apiClient from "../api/apiClient.ts";
 
 const fetchProduct = async (token: string, productId: number, queryClient: QueryClient): Promise<Product> => {
     try {
-        const {data} = await axios.get(`https://dummyjson.com/products/${productId}`, {
+        const {data} = await apiClient.get(`/products/${productId}`, {
             headers: {
                 Authorization: `Bearer invalid${token}`,
             },
