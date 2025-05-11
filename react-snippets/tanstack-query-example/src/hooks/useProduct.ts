@@ -20,12 +20,12 @@ export function useToken(clientId: string, clientSecret: string, expiresInMins: 
     });
 }
 
-export function useProduct() {
+export function useProduct(productId: number) {
     // Example usage: replace with your actual credentials
     const clientId = "emilys";
     const clientSecret = "emilyspass";
     const {data: token} = useToken(clientId, clientSecret);
-    const productId = 3;
+
     return useQuery({
         queryKey: ['product', productId],
         queryFn: () => fetchProduct(token!, productId),
@@ -37,6 +37,7 @@ export function useProduct() {
 }
 // Helper function for token fetching
 async function fetchToken(username: string, password: string, expiresInMins: number = 60): Promise<string> {
+    console.log("Fetching token", username, password, expiresInMins);
     const {data} = await apiClient.post<{ accessToken?: string; token?: string; access_token?: string }>(
         '/auth/login',
         {
