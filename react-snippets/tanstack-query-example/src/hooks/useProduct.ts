@@ -16,6 +16,7 @@ export function useToken(clientId: string, clientSecret: string, expiresInMins: 
         queryKey: ["token", clientId],
         queryFn: () => fetchToken(clientId, clientSecret, expiresInMins),
         enabled: !!clientId && !!clientSecret,
+        staleTime: 1000 * 60 * 10,
     });
 }
 
