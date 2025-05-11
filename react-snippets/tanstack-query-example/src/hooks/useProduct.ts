@@ -3,8 +3,8 @@ import axios from 'axios';
 import { Product } from '../types/Product';
 import {useToken} from "../context/tokenUtils.ts";
 
-const fetchProduct = async (token: string): Promise<Product> => {
-  const { data } = await axios.get('https://dummyjson.com/products/2', {
+const fetchProduct = async (token: string, productId: number): Promise<Product> => {
+  const { data } = await axios.get(`https://dummyjson.com/products/${productId}`, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -14,9 +14,10 @@ const fetchProduct = async (token: string): Promise<Product> => {
 
 export function useProduct() {
   const { token } = useToken();
+  const productId = 3;
   return useQuery({
-    queryKey: ['product', token],
-    queryFn: () => fetchProduct(token!),
+    queryKey: ['product', productId],
+    queryFn: () => fetchProduct(token!, productId),
     enabled: !!token,
   });
 }
