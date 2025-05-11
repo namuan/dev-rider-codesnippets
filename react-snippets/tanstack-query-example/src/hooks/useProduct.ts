@@ -5,7 +5,7 @@ import apiClient from "../api/apiClient.ts";
 const fetchProduct = async (token: string, productId: number): Promise<Product> => {
     const {data} = await apiClient.get(`/products/${productId}`, {
         headers: {
-            Authorization: `Bearer invalid${token}`,
+            Authorization: `Bearer ${token}`,
         },
     })
     return data;
