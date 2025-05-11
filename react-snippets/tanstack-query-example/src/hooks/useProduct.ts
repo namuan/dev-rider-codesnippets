@@ -1,6 +1,5 @@
 import {useQuery} from '@tanstack/react-query';
 import {Product} from '../types/Product';
-import {useToken} from "../context/tokenUtils.ts";
 import apiClient from "../api/apiClient.ts";
 
 const fetchProduct = async (token: string, productId: number): Promise<Product> => {
@@ -12,8 +11,19 @@ const fetchProduct = async (token: string, productId: number): Promise<Product> 
     return data;
 };
 
+export function useToken(clientId: string, clientSecret: string, expiresInMins: number = 60) {
+    return useQuery({
+        queryKey: ["token", clientId],
+        queryFn: () => fetchToken(clientId, clientSecret, expiresInMins),
+        enabled: !!clientId && !!clientSecret,
+    });
+}
+
 export function useProduct() {
-    const {token} = useToken();
+    // Example usage: replace with your actual credentials
+    const clientId = "emilys";
+    const clientSecret = "emilyspass";
+    const {data: token} = useToken(clientId, clientSecret);
     const productId = 3;
     return useQuery({
         queryKey: ['product', productId],
@@ -23,4 +33,16 @@ export function useProduct() {
             return !!(error.message.includes('Authentication error') && failureCount < 3);
         }
     });
+}
+// Helper function for token fetching
+async function fetchToken(username: string, password: string, expiresInMins: number = 60): Promise<string> {
+    const {data} = await apiClient.post<{ accessToken?: string; token?: string; access_token?: string }>(
+        '/auth/login',
+        {
+            username,
+            password,
+            expiresInMins,
+        }
+    );
+    return data.accessToken || data.token || data.access_token || '';
 }
