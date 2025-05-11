@@ -35,7 +35,7 @@ export const TokenProvider = ({clientId, clientSecret, children}: TokenProviderP
     }, [queryClient]);
 
     const {data: token, isLoading: tokenLoading, error: tokenError} = useQuery({
-        queryKey: ["token", clientId],
+        queryKey: ['token'],
         queryFn: () => fetchToken(clientId, clientSecret),
         enabled: !!clientId && !!clientSecret,
     });
