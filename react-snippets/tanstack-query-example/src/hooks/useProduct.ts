@@ -1,33 +1,23 @@
-import {QueryClient, useQuery, useQueryClient} from '@tanstack/react-query';
-import axios from 'axios';
+import {useQuery} from '@tanstack/react-query';
 import {Product} from '../types/Product';
 import {useToken} from "../context/tokenUtils.ts";
 import apiClient from "../api/apiClient.ts";
 
-const fetchProduct = async (token: string, productId: number, queryClient: QueryClient): Promise<Product> => {
-    try {
-        const {data} = await apiClient.get(`/products/${productId}`, {
-            headers: {
-                Authorization: `Bearer invalid${token}`,
-            },
-        })
-        return data;
-    } catch (err) {
-        if (axios.isAxiosError(err) && err.response?.status === 401) {
-            await queryClient.invalidateQueries({queryKey: ['token']})
-            throw new Error('Authentication error, refreshing token and retrying...')
-        }
-        throw err;
-    }
+const fetchProduct = async (token: string, productId: number): Promise<Product> => {
+    const {data} = await apiClient.get(`/products/${productId}`, {
+        headers: {
+            Authorization: `Bearer invalid${token}`,
+        },
+    })
+    return data;
 };
 
 export function useProduct() {
     const {token} = useToken();
-    const queryClient = useQueryClient();
     const productId = 3;
     return useQuery({
         queryKey: ['product', productId],
-        queryFn: () => fetchProduct(token!, productId, queryClient),
+        queryFn: () => fetchProduct(token!, productId),
         enabled: !!token,
         retry: (failureCount, error) => {
             return !!(error.message.includes('Authentication error') && failureCount < 3);

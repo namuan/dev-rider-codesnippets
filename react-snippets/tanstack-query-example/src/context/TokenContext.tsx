@@ -1,7 +1,7 @@
 import {ReactNode, useEffect} from 'react';
 import {TokenContext} from './tokenUtils.ts';
-import {useQuery} from "@tanstack/react-query";
-import apiClient from "../api/apiClient.ts";
+import {useQuery, useQueryClient} from "@tanstack/react-query";
+import apiClient, {setApiClientQueryClient} from "../api/apiClient.ts";
 
 interface TokenResponse {
     accessToken?: string;
@@ -28,6 +28,12 @@ interface TokenProviderProps {
 }
 
 export const TokenProvider = ({clientId, clientSecret, children}: TokenProviderProps) => {
+    const queryClient = useQueryClient();
+
+    useEffect(() => {
+        setApiClientQueryClient(queryClient);
+    }, [queryClient]);
+
     const {data: token, isLoading: tokenLoading, error: tokenError} = useQuery({
         queryKey: ["token", clientId],
         queryFn: () => fetchToken(clientId, clientSecret),
