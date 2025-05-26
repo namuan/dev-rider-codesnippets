@@ -1,0 +1,293 @@
+# File: ./tsconfig.node.json
+{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.node.tsbuildinfo",
+    "target": "ES2022",
+    "lib": ["ES2023"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true
+  },
+  "include": ["vite.config.ts"]
+}
+
+# --------------------------------------------------
+# File: ./tsconfig.app.json
+{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "target": "ES2020",
+    "useDefineForClassFields": true,
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "skipLibCheck": true,
+
+    /* Bundler mode */
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "jsx": "react-jsx",
+
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true
+  },
+  "include": ["src"]
+}
+
+# --------------------------------------------------
+# File: ./package.json
+{
+  "name": "tanstack-router-example",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.25.0",
+    "@tanstack/react-router": "^1.120.10",
+    "@types/react": "^19.1.2",
+    "@types/react-dom": "^19.1.2",
+    "@vitejs/plugin-react": "^4.4.1",
+    "eslint": "^9.25.0",
+    "eslint-plugin-react-hooks": "^5.2.0",
+    "eslint-plugin-react-refresh": "^0.4.19",
+    "globals": "^16.0.0",
+    "typescript": "~5.8.3",
+    "typescript-eslint": "^8.30.1",
+    "vite": "^6.3.5"
+  }
+}
+
+# --------------------------------------------------
+# File: ./tsconfig.json
+{
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ]
+}
+
+# --------------------------------------------------
+# File: ./eslint.config.js
+import js from '@eslint/js'
+import globals from 'globals'
+import reactHooks from 'eslint-plugin-react-hooks'
+import reactRefresh from 'eslint-plugin-react-refresh'
+import tseslint from 'typescript-eslint'
+
+export default tseslint.config(
+  { ignores: ['dist'] },
+  {
+    extends: [js.configs.recommended, ...tseslint.configs.recommended],
+    files: ['**/*.{ts,tsx}'],
+    languageOptions: {
+      ecmaVersion: 2020,
+      globals: globals.browser,
+    },
+    plugins: {
+      'react-hooks': reactHooks,
+      'react-refresh': reactRefresh,
+    },
+    rules: {
+      ...reactHooks.configs.recommended.rules,
+      'react-refresh/only-export-components': [
+        'warn',
+        { allowConstantExport: true },
+      ],
+    },
+  },
+)
+
+# --------------------------------------------------
+# File: ./vite.config.ts
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+// https://vite.dev/config/
+export default defineConfig({
+  plugins: [react()],
+})
+
+# --------------------------------------------------
+# File: ./src/App.tsx
+import './App.css'
+
+function App() {
+
+    return (
+        <></>
+    )
+}
+
+export default App
+
+# --------------------------------------------------
+# File: ./src/main.tsx
+import {StrictMode} from 'react'
+import {createRoot} from 'react-dom/client'
+import './index.css'
+import {RouterProvider} from "@tanstack/react-router";
+import {router} from "./router.tsx";
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <RouterProvider router={router} />
+  </StrictMode>,
+)
+
+# --------------------------------------------------
+# File: ./src/router.tsx
+import {createRootRoute, createRoute, createRouter} from "@tanstack/react-router";
+import {Root} from "./components/Root.tsx";
+import {Home, type HomeLoaderData} from "./components/Home.tsx";
+import {Profile, type ProfileData} from "./components/Profile.tsx";
+
+const rootRoute = createRootRoute({
+    component: Root
+})
+
+const homeRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    loader: async (): Promise<HomeLoaderData> => {
+        const response = await fetch("https://dummyjson.com/users");
+        const data = await response.json();
+        return { users: data.users };
+    },
+    component: () => {
+        const data = homeRoute.useLoaderData();
+        return <Home loaderData={data} />
+    },
+    path: "/",
+})
+
+const profileRoute = createRoute({
+    getParentRoute: () => rootRoute,
+    path: `/profile/$userId`,
+    loader: async ({params}): Promise<ProfileData> => {
+        const response = await fetch(`https://dummyjson.com/users/${params.userId}`)
+        const data = await response.json();
+        return {user: {id: data.id, firstName: data.firstName}}
+    },
+    component: () => {
+        const data = profileRoute.useLoaderData();
+        return <Profile profileData={data}/>
+    },
+})
+
+const routeTree = rootRoute.addChildren([homeRoute, profileRoute]);
+
+export const router = createRouter({routeTree})
+
+# --------------------------------------------------
+# File: ./src/vite-env.d.ts
+/// <reference types="vite/client" />
+
+# --------------------------------------------------
+# File: ./src/components/Home.tsx
+import {Link} from "@tanstack/react-router";
+
+type User = {
+    id: number
+    email: string
+}
+
+export type HomeLoaderData = {
+    users: User[]
+}
+
+export function Home({loaderData}: { loaderData: HomeLoaderData }) {
+    const {users} = loaderData
+
+    if (users.length === 0) {
+        return <p>No Users Found</p>
+    }
+
+    return (
+        <div>
+            <h1>Welcome to Home</h1>
+            <p>This is a basic TanStack home page</p>
+            <h2>Users</h2>
+            <ul>
+                {users.map((user) => (
+                        <li key={user.id}>
+                            <Link to="/profile/$userId" params={{userId: user.id}} preload="intent">
+                                <p>{user.email}</p>
+                            </Link>
+                        </li>
+                    )
+                )}
+            </ul>
+        </div>
+    )
+}
+# --------------------------------------------------
+# File: ./src/components/Root.tsx
+import {Link, Outlet} from "@tanstack/react-router";
+
+export function Root() {
+    return (
+        <div>
+            <nav>
+                <Link to="/">Home</Link>
+            </nav>
+            <hr/>
+            <Outlet/>
+        </div>
+    )
+}
+# --------------------------------------------------
+# File: ./src/components/Profile.tsx
+import {useNavigate} from "@tanstack/react-router";
+
+export type ProfileData = {
+    user: {
+        id: string;
+        firstName: string;
+    };
+};
+
+export function Profile({profileData}: { profileData: ProfileData }) {
+    const {user} = profileData;
+    const navigate = useNavigate();
+
+    return (
+        <div>
+            <h1>Profile Data</h1>
+            <p>ID: {user.id}</p>
+            <p>Name: {user.firstName}</p>
+            <button onClick={() => navigate({to: "/"})}>Go Home</button>
+        </div>
+    )
+}
+# --------------------------------------------------
