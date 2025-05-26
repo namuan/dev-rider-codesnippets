@@ -32,7 +32,7 @@ const profileRoute = createRoute({
         const data = await response.json();
         return {user: {id: data.id, firstName: data.firstName}};
     },
-    staleTime: 5 * 60 * 1000,
+    staleTime: 60 * 1000, // 1 minute
     component: () => {
         const data = profileRoute.useLoaderData();
         return <Profile profileData={data}/>;
