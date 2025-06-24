@@ -13,7 +13,7 @@ export class ApiService implements IApiService {
     }
 
     fetchSomePublicData(): Promise<{ message: string }> {
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve, _reject) => {
             setTimeout(() => {
                 console.log("ApiService: fetchSomePublicData");
                 return resolve({message: "This is some public data fetched from the API"});

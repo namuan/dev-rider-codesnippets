@@ -1,5 +1,5 @@
 import {DependencyContext, IDependencyContainer} from "./DependencyContext";
-import {useMemo} from "react";
+import React, {useMemo} from "react";
 import {AuthService} from "../services/auth.service";
 import {ApiService} from "../services/api.service";
 
