@@ -1,12 +1,12 @@
 import {AuthService, IUser} from "./auth.service";
 
-export interface IApiService {
+export interface ApiService {
     fetchUserProfile(): Promise<IUser>;
 
     fetchSomePublicData(): Promise<{ message: string }>;
 }
 
-export class ApiService implements IApiService {
+export class PublicApiService implements ApiService {
 
     constructor(private authService: AuthService) {
         console.log("ApiService instantiated");

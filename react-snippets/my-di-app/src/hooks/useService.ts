@@ -1,7 +1,7 @@
-import {DependencyContext, IDependencyContainer} from "../contexts/DependencyContext";
+import {DependencyContext, DependencyContainer} from "../contexts/DependencyContext";
 import {useContext} from "react";
 
-export function useService<K extends keyof IDependencyContainer>(serviceName: K): IDependencyContainer[K] {
+export function useService<K extends keyof DependencyContainer>(serviceName: K): DependencyContainer[K] {
     const container = useContext(DependencyContext);
 
     if (!container) {

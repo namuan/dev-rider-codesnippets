@@ -1,10 +1,10 @@
 import {createContext} from "react";
-import {IApiService} from "../services/api.service";
+import {ApiService} from "../services/publicApiService";
 import {IAuthService} from "../services/auth.service";
 
-export interface IDependencyContainer {
+export interface DependencyContainer {
     authService: IAuthService;
-    apiService: IApiService;
+    apiService: ApiService;
 }
 
-export const DependencyContext = createContext<IDependencyContainer | null>(null);
+export const DependencyContext = createContext<DependencyContainer | null>(null);

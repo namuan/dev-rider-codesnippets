@@ -1,18 +1,18 @@
-import {DependencyContext, IDependencyContainer} from "./DependencyContext";
+import {DependencyContext, DependencyContainer} from "./DependencyContext";
 import React, {useMemo} from "react";
 import {AuthService} from "../services/auth.service";
-import {ApiService} from "../services/api.service";
+import {PublicApiService} from "../services/publicApiService";
 
 interface DependencyProviderProps {
     children: React.ReactNode;
 }
 
 export const DependencyProvider = ({children}: DependencyProviderProps) => {
-    const container = useMemo<IDependencyContainer>(() => {
+    const container = useMemo<DependencyContainer>(() => {
         console.log("DependencyProvider: Instantiating Services");
 
         const authServiceInstance = new AuthService();
-        const apiServiceInstance = new ApiService(authServiceInstance);
+        const apiServiceInstance = new PublicApiService(authServiceInstance);
 
         return {
             authService: authServiceInstance,
