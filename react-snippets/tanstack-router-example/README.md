@@ -1,54 +1,39 @@
-# React + TypeScript + Vite
+# TanStack React Router App with TypeScript
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This is a simple React application built using **Vite**, **TypeScript**, and **TanStack Router**. The app demonstrates client-side routing, data loading via API calls, and type-safe route handling.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+- **Routing**: Uses `@tanstack/react-router` for efficient, type-safe routing.
+- **Data Loading**: Loads user data from the [DummyJSON API](https://dummyjson.com/docs/users) on route navigation.
+- **Type Safety**: Full TypeScript support for loader data and components.
+- **Navigation**: Supports intent-based preloading and dynamic parameterized routes (`/profile/$userId`).
 
-## Expanding the ESLint configuration
+## Pages
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- **Home (`/`)**: Displays a list of users fetched from the API. Each user is a link to their profile.
+- **Profile (`/profile/:userId`)**: Shows details of a specific user by ID. Includes error handling for invalid IDs.
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
-```
+## Components
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+- `Root`: Main layout with navigation.
+- `Home`: Displays the list of users.
+- `Profile`: Displays individual user details with a "Go Home" button.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Setup
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+To run this app:
+
+1. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+2. Start the development server:
+
+   ```bash
+   npm run dev
+   ```
+
+3. Open [http://localhost:5173](http://localhost:5173) in your browser.
