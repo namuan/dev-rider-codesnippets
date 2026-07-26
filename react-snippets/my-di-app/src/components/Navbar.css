@@ -1,0 +1,50 @@
+.navbar {
+    background-color: #333;
+    padding: 10px 20px;
+    margin-bottom: 20px;
+}
+
+.navbar-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+.nav-item {
+    margin-right: 15px;
+}
+
+.nav-link, .nav-button {
+    color: white;
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.nav-link:hover, .nav-button:hover {
+    background-color: #555;
+}
+
+.nav-button {
+    background-color: #007bff;
+    border: none;
+    cursor: pointer;
+}
+
+.nav-button:hover {
+    background-color: #0056b3;
+}
+
+.nav-user-info {
+    margin-left: auto; /* Pushes user info and logout to the right */
+    display: flex;
+    align-items: center;
+    color: #ddd;
+}
+
+.nav-user-info span {
+    margin-right: 10px;
+}
