@@ -1,0 +1,391 @@
+# File: ./vite.config.ts
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+
+export default defineConfig({
+  plugins: [react()],
+})
+# --------------------------------------------------
+# File: ./src/App.tsx
+import {useProduct} from "./hooks/useProduct";
+import {ProductDetail} from "./components/ProductDetail";
+import {useState} from "react";
+
+function App() {
+    const [productId, setProductId] = useState(3);
+    const {data: productData, isLoading, error} = useProduct(productId);
+
+    const handlePrevious = () => {
+        if (productId > 1) {
+            setProductId((prev) => prev - 1);
+        }
+    };
+
+    const handleNext = () => {
+        if (productId <= 100) {
+            setProductId((prev) => prev + 1);
+        }
+    };
+
+    if (isLoading) return <div className="text-center mt-8">Loading...</div>;
+    if (error) return <div className="text-center mt-8 text-red-500">Error: {error.message}</div>;
+    if (!productData) return null;
+
+    return <div className="max-w-4xl mx-auto p-4">
+        <div className="flex justify-between mb-4">
+            <button
+                onClick={handlePrevious}
+                disabled={productId <= 1}
+                className={`px-4 py-2 rounded ${
+                    productId <= 1 ? "bg-gray-300 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600 text-white"
+                }`}
+            >
+                Previous
+            </button>
+            <button
+                onClick={handleNext}
+                disabled={productId >= 100}
+                className={`px-4 py-2 rounded ${
+                    productId >= 100 ? "bg-gray-300 cursor-not-allowed" : "bg-blue-500 hover:bg-blue-600 text-white"
+                }`}
+            >
+                Next
+            </button>
+        </div>
+        <ProductDetail product={productData}/>
+    </div>;
+}
+
+export default App
+# --------------------------------------------------
+# File: ./src/main.tsx
+import React from "react";
+import ReactDOM from "react-dom/client";
+import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
+import App from "./App.tsx";
+import "./index.css";
+import {ReactQueryDevtools} from "@tanstack/react-query-devtools";
+
+const queryClient = new QueryClient();
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
+    <React.StrictMode>
+        <QueryClientProvider client={queryClient}>
+            <App/>
+            <ReactQueryDevtools initialIsOpen={false}/>
+        </QueryClientProvider>
+    </React.StrictMode>,
+);
+
+# --------------------------------------------------
+# File: ./src/vite-env.d.ts
+/// <reference types="vite/client" />
+
+# --------------------------------------------------
+# File: ./src/types/Product.ts
+export interface Product {
+  id: number;
+  title: string;
+  description: string;
+  category: string;
+  price: number;
+  discountPercentage: number;
+  rating: number;
+  stock: number;
+  tags: string[];
+  brand: string;
+  sku: string;
+  weight: number;
+  dimensions: {
+    width: number;
+    height: number;
+    depth: number;
+  };
+  warrantyInformation: string;
+  shippingInformation: string;
+  availabilityStatus: string;
+  reviews: {
+    rating: number;
+    comment: string;
+    date: string;
+    reviewerName: string;
+    reviewerEmail: string;
+  }[];
+  returnPolicy: string;
+  minimumOrderQuantity: number;
+  meta: {
+    createdAt: string;
+    updatedAt: string;
+    barcode: string;
+    qrCode: string;
+  };
+  thumbnail: string;
+  images: string[];
+}
+# --------------------------------------------------
+# File: ./src/context/tokenUtils.ts
+import {createContext, useContext} from 'react';
+
+interface TokenContextProps {
+    token: string | null;
+    tokenError: string | null;
+    tokenLoading: boolean;
+}
+
+export const TokenContext = createContext<TokenContextProps | undefined>(undefined);
+
+export const useTokenContext = (): TokenContextProps => {
+    const context = useContext(TokenContext);
+    if (!context) {
+        throw new Error('useTokenContext must be used within a TokenProvider');
+    }
+    return context;
+};
+
+export function useToken() {
+    return useTokenContext();
+}
+
+# --------------------------------------------------
+# File: ./src/context/TokenContext.tsx
+import {ReactNode, useEffect} from 'react';
+import {TokenContext} from './tokenUtils.ts';
+import {useQuery, useQueryClient} from "@tanstack/react-query";
+import apiClient, {setApiClientQueryClient} from "../api/apiClient.ts";
+
+interface TokenResponse {
+    accessToken?: string;
+    token?: string;
+    access_token?: string;
+}
+
+const fetchToken = async (username: string, password: string, expiresInMins: number = 60): Promise<string> => {
+    const {data} = await apiClient.post<TokenResponse>(
+        '/auth/login',
+        {
+            username,
+            password,
+            expiresInMins,
+        }
+    );
+    return data.accessToken || data.token || data.access_token || '';
+};
+
+interface TokenProviderProps {
+    clientId: string;
+    clientSecret: string;
+    children: ReactNode;
+}
+
+export const TokenProvider = ({clientId, clientSecret, children}: TokenProviderProps) => {
+    const queryClient = useQueryClient();
+
+    useEffect(() => {
+        setApiClientQueryClient(queryClient);
+    }, [queryClient]);
+
+    const {data: token, isLoading: tokenLoading, error: tokenError} = useQuery({
+        queryKey: ['token'],
+        queryFn: () => fetchToken(clientId, clientSecret),
+        enabled: !!clientId && !!clientSecret,
+    });
+
+    useEffect(() => {
+        if (token) {
+            sessionStorage.setItem("authToken", token);
+        }
+        if (tokenError) {
+            sessionStorage.removeItem("authToken");
+        }
+    }, [token, tokenError]);
+
+    return (
+        <TokenContext.Provider value={{
+            token: token ?? null,
+            tokenError: tokenError ? tokenError.message : null,
+            tokenLoading
+        }}>
+            {children}
+        </TokenContext.Provider>
+    )
+};
+# --------------------------------------------------
+# File: ./src/components/ProductDetail.tsx
+import { Product } from '../types/Product';
+
+interface ProductDetailProps {
+  product: Product;
+}
+
+export function ProductDetail({ product }: ProductDetailProps) {
+  const {
+    title,
+    description,
+    category,
+    price,
+    discountPercentage,
+    rating,
+    stock,
+    tags,
+    brand,
+    sku,
+    weight,
+    dimensions,
+    warrantyInformation,
+    shippingInformation,
+    availabilityStatus,
+    reviews,
+    returnPolicy,
+    minimumOrderQuantity,
+    meta,
+    thumbnail,
+    images,
+  } = product;
+
+  return (
+    <div className="max-w-4xl mx-auto p-4">
+      <h1 className="text-2xl font-bold mb-4">{title}</h1>
+      <div className="flex flex-col md:flex-row gap-8">
+        <div className="flex-shrink-0">
+          {thumbnail && <img src={thumbnail} alt={title} className="w-64 h-64 object-cover rounded-lg border" />}
+          <div className="flex gap-2 mt-2">
+            {images?.map((img, idx) => (
+              <img key={idx} src={img} alt={title + ' ' + idx} className="w-16 h-16 object-cover rounded border" />
+            ))}
+          </div>
+        </div>
+        <div className="flex-1">
+          <p className="mb-2 text-lg">{description}</p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-4">
+            <div><span className="font-semibold">Category:</span> {category}</div>
+            <div><span className="font-semibold">Brand:</span> {brand}</div>
+            <div><span className="font-semibold">SKU:</span> {sku}</div>
+            <div><span className="font-semibold">Price:</span> ${price} <span className="text-green-600">({discountPercentage}% off)</span></div>
+            <div><span className="font-semibold">Rating:</span> {rating}</div>
+            <div><span className="font-semibold">Stock:</span> {stock}</div>
+            <div><span className="font-semibold">Availability:</span> {availabilityStatus}</div>
+            <div><span className="font-semibold">Weight:</span> {weight}g</div>
+            <div><span className="font-semibold">Dimensions:</span> {dimensions?.width} x {dimensions?.height} x {dimensions?.depth} cm</div>
+            <div><span className="font-semibold">Warranty:</span> {warrantyInformation}</div>
+            <div><span className="font-semibold">Shipping:</span> {shippingInformation}</div>
+            <div><span className="font-semibold">Return Policy:</span> {returnPolicy}</div>
+            <div><span className="font-semibold">Min Order Qty:</span> {minimumOrderQuantity}</div>
+            <div><span className="font-semibold">Tags:</span> {tags?.join(', ')}</div>
+          </div>
+          <div className="mb-4">
+            <span className="font-semibold">Meta:</span>
+            <ul className="ml-4 list-disc">
+              <li>Created: {meta?.createdAt}</li>
+              <li>Updated: {meta?.updatedAt}</li>
+              <li>Barcode: {meta?.barcode}</li>
+              <li>QR Code: {meta?.qrCode}</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+      <div className="mt-8">
+        <h2 className="text-xl font-bold mb-2">Reviews</h2>
+        {reviews?.length ? (
+          <div className="space-y-4">
+            {reviews.map((review, idx) => (
+              <div key={idx} className="border rounded p-3 bg-gray-50">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="font-semibold">{review.reviewerName}</span>
+                  <span className="text-xs text-gray-500">({review.reviewerEmail})</span>
+                  <span className="ml-auto text-yellow-500">Rating: {review.rating}</span>
+                </div>
+                <div className="text-sm mb-1">{review.comment}</div>
+                <div className="text-xs text-gray-400">{new Date(review.date).toLocaleString()}</div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <div>No reviews yet.</div>
+        )}
+      </div>
+    </div>
+  );
+}
+# --------------------------------------------------
+# File: ./src/hooks/useProduct.ts
+import {useQuery} from '@tanstack/react-query';
+import {Product} from '../types/Product';
+import apiClient from "../api/apiClient.ts";
+
+const fetchProduct = async (token: string, productId: number): Promise<Product> => {
+    const {data} = await apiClient.get(`/products/${productId}`, {
+        headers: {
+            Authorization: `Bearer invalid${token}`,
+        },
+    })
+    return data;
+};
+
+export function useToken(clientId: string, clientSecret: string, expiresInMins: number = 60) {
+    return useQuery({
+        queryKey: ["token", clientId],
+        queryFn: () => fetchToken(clientId, clientSecret, expiresInMins),
+        enabled: !!clientId && !!clientSecret,
+        staleTime: 1000 * 60 * 10,
+    });
+}
+
+export function useProduct(productId: number) {
+    // Example usage: replace with your actual credentials
+    const clientId = "emilys";
+    const clientSecret = "emilyspass";
+    const {data: token} = useToken(clientId, clientSecret);
+
+    return useQuery({
+        queryKey: ['product', productId],
+        queryFn: () => fetchProduct(token!, productId),
+        enabled: !!token,
+        retry: (failureCount, error) => {
+            return !!(error.message.includes('Authentication error') && failureCount < 3);
+        }
+    });
+}
+// Helper function for token fetching
+async function fetchToken(username: string, password: string, expiresInMins: number = 60): Promise<string> {
+    console.log("Fetching token", username, password, expiresInMins);
+    const {data} = await apiClient.post<{ accessToken?: string; token?: string; access_token?: string }>(
+        '/auth/login',
+        {
+            username,
+            password,
+            expiresInMins,
+        }
+    );
+    return data.accessToken || data.token || data.access_token || '';
+}
+
+# --------------------------------------------------
+# File: ./src/api/apiClient.ts
+import axios, {AxiosError} from "axios";
+import {QueryClient} from "@tanstack/react-query";
+
+const apiClient = axios.create({
+    baseURL: 'https://dummyjson.com/',
+})
+
+let queryClient: QueryClient | null = null;
+
+apiClient.interceptors.response.use(
+    (response) => response,
+    async (error: AxiosError) => {
+        if (error.response?.status === 401 && queryClient) {
+            await queryClient.invalidateQueries({queryKey: ['token']})
+            throw new Error('Authentication error, refreshing token and retrying...')
+        }
+
+        return Promise.reject(error);
+    }
+);
+
+export const setApiClientQueryClient = (qc: QueryClient) => {
+    queryClient = qc;
+}
+
+export default apiClient;
+
+# --------------------------------------------------

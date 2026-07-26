@@ -2,6 +2,7 @@ import {ReactNode} from "react";
 import CarouselSlide, {CarouselStyleProp} from "./CarouselSlide.tsx";
 import CarouselButton from "./CarouselButton.tsx";
 import {useSlideIndex} from "./useSlideIndex.tsx";
+import styled from "styled-components";
 
 type Slide = {
     imgUrl?: string,
@@ -41,8 +42,13 @@ const Carousel = (
                 data-testid={"next-button"}
                 onClick={incrementSlideIndex}
             >Next</CarouselButton>
+            <FixedFooter>Blah</FixedFooter>
         </div>
     );
 };
+
+const FixedFooter = styled.div `
+    
+`
 
 export default Carousel;
